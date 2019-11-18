@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Gym Fitness Club</string>
+
+    <!-- Input Fields -->
+    <string name="username">Usuario</string>
+    <string name="password">Contraseña</string>
+    <string name="repassword">Repite la contaseña</string>
+    <string name="firstname">Nombre</string>
+    <string name="lastname">Apellido</string>
+    <string name="birth">Nacimiento</string>
+    <string name="height">Estatura</string>
+    <string name="weight">Peso</string>
+    <string name="date">Fecha</string>
+    <string name="imc">IMC</string>
+
+    <!-- CTA -->
+    <string name="login">Iniciar Sesión</string>
+    <string name="register">Registrarse</string>
+    <string name="logout">Cerrar Sesión</string>
+    <string name="imc_register">Registrar IMC</string>
+    <string name="back">Volver</string>
+</resources>
