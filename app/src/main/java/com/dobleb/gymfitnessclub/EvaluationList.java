@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dobleb.gymfitnessclub.adapter.EvaluationAdapter;
+import com.dobleb.gymfitnessclub.dao.EvaluationDAO;
 import com.dobleb.gymfitnessclub.model.Evaluation;
 import com.dobleb.gymfitnessclub.model.ListPlaceholder;
 import com.dobleb.gymfitnessclub.ui.DatePickerFragment;
@@ -35,6 +36,10 @@ public class EvaluationList extends AppCompatActivity {
 
     private ArrayList<Evaluation> evaluations;
     private EvaluationAdapter evaluationAdapter;
+    private EvaluationDAO dao;
+    private SharedPreferences preferences;
+
+    private int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +49,16 @@ public class EvaluationList extends AppCompatActivity {
         logoutLink = (TextView) findViewById(R.id.logoutLink);
         addBtn = (FloatingActionButton) findViewById(R.id.addBtn);
         listView = (ListView) findViewById(R.id.list_view);
-        evaluations = ListPlaceholder.getList();
         tilFrom = (TextInputLayout) findViewById(R.id.til_from);
         tilTo = (TextInputLayout) findViewById(R.id.til_to);
         filterBtn = (Button) findViewById(R.id.filterBtn);
+
+        preferences = getSharedPreferences("userData", Context.MODE_PRIVATE);
+        dao = new EvaluationDAO(this);
+
+        userId = preferences.getInt("id", 0);
+
+        evaluations = dao.findAllByUser(userId);
 
         evaluationAdapter = new EvaluationAdapter(EvaluationList.this, evaluations);
         listView.setAdapter(evaluationAdapter);

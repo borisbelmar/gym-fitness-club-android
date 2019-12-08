@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class Evaluation implements Serializable {
 
     private int id;
+    private int userId;
     private String date;
     private double weight;
     private double height;
@@ -16,6 +17,14 @@ public class Evaluation implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getDate() {
@@ -55,15 +64,17 @@ public class Evaluation implements Serializable {
         return this.imc;
     }
 
-    public Evaluation(String date, double weight, double height) {
+    public Evaluation(int userId, String date, double weight, double height) {
+        this.userId = userId;
         this.date = date;
         this.weight = weight;
         this.height = height;
         this.imc = this.calculateImc();
     }
 
-    public Evaluation(int id, String date, double weight, double height) {
+    public Evaluation(int id, int userId, String date, double weight, double height) {
         this.id = id;
+        this.userId = userId;
         this.date = date;
         this.weight = weight;
         this.height = height;

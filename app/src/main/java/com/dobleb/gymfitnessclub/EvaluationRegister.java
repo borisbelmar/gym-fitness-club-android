@@ -3,7 +3,9 @@ package com.dobleb.gymfitnessclub;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dobleb.gymfitnessclub.controller.Validate;
+import com.dobleb.gymfitnessclub.dao.EvaluationDAO;
+import com.dobleb.gymfitnessclub.model.Evaluation;
 import com.dobleb.gymfitnessclub.ui.DatePickerFragment;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -21,18 +25,30 @@ public class EvaluationRegister extends AppCompatActivity {
 
     Button saveBtn;
     TextView tvImc;
+    TextView tvHeight;
     TextInputLayout tilDate;
     TextInputLayout tilWeight;
+    double height, weight;
+    Evaluation evaluation;
+    EvaluationDAO dao;
+    SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_evaluation_register);
 
+        dao = new EvaluationDAO(this);
+        preferences = getSharedPreferences("userData", Context.MODE_PRIVATE);
+
         saveBtn = (Button) findViewById(R.id.saveBtn);
         tvImc = (TextView) findViewById(R.id.tv_imc);
+        tvHeight = (TextView) findViewById(R.id.tv_height);
         tilDate = (TextInputLayout) findViewById(R.id.til_date);
         tilWeight = (TextInputLayout) findViewById(R.id.til_weight);
+        height = Double.parseDouble(preferences.getString("height","1.0"));
+
+        tvHeight.setText(preferences.getString("height","1.0") + " metros");
 
         tilWeight.getEditText().addTextChangedListener(new TextWatcher() {
 
@@ -46,8 +62,6 @@ public class EvaluationRegister extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                double height = 1.70;
-                double weight;
                 String strWeight = tilWeight.getEditText().getText().toString();
 
                 if(!strWeight.isEmpty()) {
@@ -66,9 +80,16 @@ public class EvaluationRegister extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(validate()) {
-                    Intent intent = new Intent(v.getContext(),EvaluationList.class);
-                    startActivity(intent);
-                    Toast.makeText(v.getContext(), "Esto debería registrar el IMC en la BBDD", Toast.LENGTH_SHORT).show();
+                    int userId = preferences.getInt("id", 0);
+                    String date = tilDate.getEditText().getText().toString();
+                    evaluation = new Evaluation(userId, date, weight, height);
+                    if(dao.insert(evaluation)) {
+                        Intent intent = new Intent(v.getContext(),EvaluationList.class);
+                        startActivity(intent);
+                        Toast.makeText(v.getContext(), "Registrado con éxito", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(v.getContext(), "Error al registrar evaluación", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(v.getContext(), "Debes llenar todos los datos", Toast.LENGTH_SHORT).show();
                 }

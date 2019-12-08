@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dobleb.gymfitnessclub.dao.UserDAO;
+import com.dobleb.gymfitnessclub.model.User;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.w3c.dom.Text;
@@ -21,6 +23,8 @@ public class Login extends AppCompatActivity {
     TextView registerLink;
     TextInputLayout tilUser;
     TextInputLayout tilPass;
+    UserDAO dao;
+    SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,12 +36,12 @@ public class Login extends AppCompatActivity {
         tilUser = (TextInputLayout) findViewById(R.id.til_user);
         tilPass = (TextInputLayout) findViewById(R.id.til_pass);
 
-        final SharedPreferences preferences = getSharedPreferences("userData", Context.MODE_PRIVATE);
+        preferences = getSharedPreferences("userData", Context.MODE_PRIVATE);
 
         if(preferences.contains("username")) {
             Intent intent = new Intent(Login.this, EvaluationList.class);
             startActivity(intent);
-            Toast.makeText(this, "Bienvenido denuevo", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Bienvenido denuevo " + preferences.getString("firstname", "User"), Toast.LENGTH_SHORT).show();
         }
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
@@ -47,14 +51,22 @@ public class Login extends AppCompatActivity {
                 String username = tilUser.getEditText().getText().toString();
                 String pass = tilPass.getEditText().getText().toString();
 
-                if(username.equals("test") && pass.equals("test")) {
+                dao = new UserDAO(v.getContext());
+                User user = dao.login(username, pass);
+
+                if(user != null) {
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("username", username);
+                    editor.putInt("id", user.getId());
+                    editor.putString("username", user.getUsername());
+                    editor.putString("firstname", user.getFirstname());
+                    editor.putString("lastname", user.getLastname());
+                    editor.putString("height", Double.toString(user.getHeight()));
                     editor.commit();
                     Intent intent = new Intent(v.getContext(),EvaluationList.class);
                     startActivity(intent);
+                    Toast.makeText(v.getContext(), "Bienvenido " + user.getFirstname(), Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(v.getContext(), "Usuario o contraseña incorrecto (Intenta user: test | pass: test)", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(v.getContext(), "Usuario o contraseña incorrecto", Toast.LENGTH_SHORT).show();
                 }
 
 
