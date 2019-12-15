@@ -18,7 +18,6 @@ import android.widget.Toast;
 import com.dobleb.gymfitnessclub.adapter.EvaluationAdapter;
 import com.dobleb.gymfitnessclub.dao.EvaluationDAO;
 import com.dobleb.gymfitnessclub.model.Evaluation;
-import com.dobleb.gymfitnessclub.model.ListPlaceholder;
 import com.dobleb.gymfitnessclub.ui.DatePickerFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
