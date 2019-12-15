@@ -93,7 +93,7 @@ public class Register extends AppCompatActivity {
         DatePickerFragment newFragment = DatePickerFragment.newInstance(new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                final String selectedDate = year + "/" + (month+1) + "/" + day;
+                final String selectedDate = year + "-" + (month+1) + "-" + (day < 10 ? "0"+day : day);
                 til.getEditText().setText(selectedDate);
             }
         });

@@ -15,7 +15,7 @@ public class Validate {
     }
 
     public static boolean date(String date) {
-        Pattern pattern = Pattern.compile("([12]\\d{3}\\/([1-9]|1[0-2])\\/([12]\\d|3[01]|[1-9]))");
+        Pattern pattern = Pattern.compile("([12]\\d{3}-([1-9]|1[0-2])-([12]\\d|3[01]|0[1-9]))");
         return pattern.matcher(date).matches();
     }
 

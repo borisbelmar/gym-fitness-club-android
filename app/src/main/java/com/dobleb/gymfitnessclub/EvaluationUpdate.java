@@ -21,7 +21,7 @@ import com.dobleb.gymfitnessclub.model.Evaluation;
 import com.dobleb.gymfitnessclub.ui.DatePickerFragment;
 import com.google.android.material.textfield.TextInputLayout;
 
-public class EvaluationRegister extends AppCompatActivity {
+public class EvaluationUpdate extends AppCompatActivity {
 
     Button saveBtn;
     TextView tvImc;
@@ -41,6 +41,17 @@ public class EvaluationRegister extends AppCompatActivity {
         dao = new EvaluationDAO(this);
         preferences = getSharedPreferences("userData", Context.MODE_PRIVATE);
 
+        Bundle receivedObjects = getIntent().getExtras();
+        evaluation = null;
+
+        if(receivedObjects != null) {
+            evaluation = (Evaluation) receivedObjects.getSerializable("evaluation");
+        } else {
+            Intent intent = new Intent(EvaluationUpdate.this, EvaluationList.class);
+            startActivity(intent);
+            Toast.makeText(EvaluationUpdate.this, "Hubo un problema al recuperar la información de la evaluación", Toast.LENGTH_SHORT).show();
+        }
+
         saveBtn = (Button) findViewById(R.id.saveBtn);
         tvImc = (TextView) findViewById(R.id.tv_imc);
         tvHeight = (TextView) findViewById(R.id.tv_height);
@@ -49,6 +60,10 @@ public class EvaluationRegister extends AppCompatActivity {
         height = Double.parseDouble(preferences.getString("height","1.0"));
 
         tvHeight.setText(preferences.getString("height","1.0") + " metros");
+
+        tilDate.getEditText().setText(evaluation.getDate());
+        tilWeight.getEditText().setText(Double.toString(evaluation.getWeight()));
+        tvImc.setText(String.format("%.1f", evaluation.getImc()));
 
         tilWeight.getEditText().addTextChangedListener(new TextWatcher() {
 
@@ -80,15 +95,16 @@ public class EvaluationRegister extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(validate()) {
-                    int userId = preferences.getInt("id", 0);
                     String date = tilDate.getEditText().getText().toString();
-                    evaluation = new Evaluation(userId, date, weight, height);
-                    if(dao.insert(evaluation)) {
+                    evaluation.setDate(date);
+                    evaluation.setHeight(height);
+                    evaluation.setWeight(weight);
+                    if(dao.update(evaluation)) {
                         Intent intent = new Intent(v.getContext(),EvaluationList.class);
                         startActivity(intent);
-                        Toast.makeText(v.getContext(), "Registrado con éxito", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(v.getContext(), "Actualizado con éxito", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(v.getContext(), "Error al registrar evaluación", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(v.getContext(), "Error al actualizar evaluación", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(v.getContext(), "Debes llenar todos los datos", Toast.LENGTH_SHORT).show();

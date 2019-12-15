@@ -15,12 +15,14 @@ import com.dobleb.gymfitnessclub.model.Evaluation;
 public class EvaluationItem extends AppCompatActivity {
     Button backBtn;
     Button deleteBtn;
+    Button updateBtn;
     TextView tvDate;
     TextView tvWeight;
     TextView tvHeight;
     TextView tvImc;
 
     EvaluationDAO dao;
+    Evaluation evaluation;
 
     int id;
 
@@ -31,6 +33,7 @@ public class EvaluationItem extends AppCompatActivity {
 
         backBtn = (Button) findViewById(R.id.backBtn);
         deleteBtn = (Button) findViewById(R.id.deleteBtn);
+        updateBtn = (Button) findViewById(R.id.updateBtn);
 
         tvDate = (TextView) findViewById(R.id.tv_date);
         tvWeight = (TextView) findViewById(R.id.tv_weight);
@@ -40,7 +43,7 @@ public class EvaluationItem extends AppCompatActivity {
         dao = new EvaluationDAO(this);
 
         Bundle receivedObjects = getIntent().getExtras();
-        Evaluation evaluation = null;
+        evaluation = null;
 
         if(receivedObjects != null) {
             evaluation = (Evaluation) receivedObjects.getSerializable("evaluation");
@@ -65,16 +68,30 @@ public class EvaluationItem extends AppCompatActivity {
             }
         });
 
+        updateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(),EvaluationUpdate.class);
+
+                Bundle bundle = new Bundle();
+
+                bundle.putSerializable("evaluation", evaluation);
+                intent.putExtras(bundle);
+
+                startActivity(intent);
+            }
+        });
+
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(dao.deleteById(id)) {
-                    Intent intent = new Intent(v.getContext(),EvaluationList.class);
-                    startActivity(intent);
-                    Toast.makeText(v.getContext(), ("Se ha eliminado el registro " + id), Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(v.getContext(), ("Error al eliminar el registro " + id), Toast.LENGTH_SHORT).show();
-                }
+            if(dao.deleteById(id)) {
+                Intent intent = new Intent(v.getContext(),EvaluationList.class);
+                startActivity(intent);
+                Toast.makeText(v.getContext(), ("Se ha eliminado el registro " + id), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(v.getContext(), ("Error al eliminar el registro " + id), Toast.LENGTH_SHORT).show();
+            }
             }
         });
     }

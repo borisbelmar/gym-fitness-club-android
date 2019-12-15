@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.dobleb.gymfitnessclub.controller.AdminSQLiteOpenHelper;
 import com.dobleb.gymfitnessclub.model.Evaluation;
@@ -69,6 +70,30 @@ public class EvaluationDAO implements iCRUD<Evaluation> {
         return resultList;
     }
 
+    public ArrayList<Evaluation> findAllByDates(String[] dates, int user_id) {
+        admin = new AdminSQLiteOpenHelper(context, dbName, null, 1);
+        SQLiteDatabase database = admin.getWritableDatabase();
+
+        Cursor rows = database.rawQuery("SELECT id, date, weight, height FROM evaluations WHERE date BETWEEN '" + dates[0] + "' AND '" + dates[1] + "'", null);
+
+        Log.i("Log", "SELECT id, date, weight, height FROM evaluations WHERE date BETWEEN " + dates[0] + " AND " + dates[1]);
+
+        ArrayList<Evaluation> resultList = new ArrayList<>();
+
+        while(rows.moveToNext()) {
+            int id = Integer.parseInt(rows.getString(0));
+            String date = rows.getString(1);
+            double weight = Double.parseDouble(rows.getString(2));
+            double height = Double.parseDouble(rows.getString(3));
+
+            Evaluation evaluation = new Evaluation(id, user_id, date, weight, height);
+
+            resultList.add(evaluation);
+        }
+        database.close();
+        return resultList;
+    }
+
     @Override
     public Evaluation findById(int id) {
         admin = new AdminSQLiteOpenHelper(context, dbName, null, 1);
@@ -91,7 +116,26 @@ public class EvaluationDAO implements iCRUD<Evaluation> {
 
     @Override
     public boolean update(Evaluation evaluation) {
-        return false;
+        admin = new AdminSQLiteOpenHelper(context, dbName, null, 1);
+        SQLiteDatabase database = admin.getWritableDatabase();
+
+        ContentValues registry = new ContentValues();
+
+        registry.put("user_id", evaluation.getUserId());
+        registry.put("date", evaluation.getDate());
+        registry.put("weight", evaluation.getWeight());
+        registry.put("height", evaluation.getHeight());
+
+        boolean isUpdated = database.update(tableName, registry, "id = ?", new String[] {Integer.toString(evaluation.getId())}) > 0;
+
+        if(isUpdated) {
+            database.close();
+            return true;
+        } else {
+            database.close();
+            return false;
+        }
+
     }
 
     @Override

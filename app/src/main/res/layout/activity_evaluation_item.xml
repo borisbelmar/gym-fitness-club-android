@@ -89,6 +89,15 @@
                     android:text="50" />
 
                 <Button
+                    android:id="@+id/updateBtn"
+                    style="@style/Widget.AppCompat.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="26dp"
+                    android:background="#DDDDDD"
+                    android:text="Actualizar registro" />
+
+                <Button
                     android:id="@+id/deleteBtn"
                     style="@style/Widget.AppCompat.Button"
                     android:layout_width="match_parent"

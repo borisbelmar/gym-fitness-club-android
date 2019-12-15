@@ -39,7 +39,12 @@ public class EvaluationList extends AppCompatActivity {
     private EvaluationDAO dao;
     private SharedPreferences preferences;
 
+    private String[] dates;
+
     private int userId;
+    private String firstname;
+    private String lastname;
+    private String height;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +62,21 @@ public class EvaluationList extends AppCompatActivity {
         dao = new EvaluationDAO(this);
 
         userId = preferences.getInt("id", 0);
+        firstname = preferences.getString("firstname", "Firstname");
+        lastname = preferences.getString("lastname", "Lastname");
+        height = preferences.getString("height", "0");
 
-        evaluations = dao.findAllByUser(userId);
+        Bundle receivedObjects = getIntent().getExtras();
+        dates = new String[2];
+
+        if(receivedObjects != null) {
+            dates = receivedObjects.getStringArray("dates");
+            evaluations = dao.findAllByDates(dates, userId);
+            tilFrom.getEditText().setText(dates[0]);
+            tilTo.getEditText().setText(dates[1]);
+        } else {
+            evaluations = dao.findAllByUser(userId);
+        }
 
         evaluationAdapter = new EvaluationAdapter(EvaluationList.this, evaluations);
         listView.setAdapter(evaluationAdapter);
@@ -117,7 +135,18 @@ public class EvaluationList extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!tilFrom.getEditText().getText().toString().isEmpty() && !tilTo.getEditText().getText().toString().isEmpty()) {
-                    Toast.makeText(v.getContext(), "Esto debería filtrar por las fechas " + tilFrom.getEditText().getText() + " y " + tilTo.getEditText().getText(), Toast.LENGTH_SHORT).show();
+                    dates[0] = tilFrom.getEditText().getText().toString();
+                    dates[1] = tilTo.getEditText().getText().toString();
+
+                    Intent intent = new Intent(v.getContext(),EvaluationList.class);
+                    Bundle bundle = new Bundle();
+
+                    bundle.putStringArray("dates", dates);
+                    intent.putExtras(bundle);
+
+                    startActivity(intent);
+
+                    Toast.makeText(v.getContext(), "Filtrando entre las fechas fechas " + tilFrom.getEditText().getText() + " y " + tilTo.getEditText().getText(), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(v.getContext(), "Ingresa fechas válidas", Toast.LENGTH_SHORT).show();
                 }
@@ -129,7 +158,7 @@ public class EvaluationList extends AppCompatActivity {
         DatePickerFragment newFragment = DatePickerFragment.newInstance(new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                final String selectedDate = year + "/" + (month+1) + "/" + day;
+                final String selectedDate = year + "-" + (month+1) + "-" + (day < 10 ? "0"+day : day);
                 til.getEditText().setText(selectedDate);
             }
         });
