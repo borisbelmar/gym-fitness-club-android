@@ -139,7 +139,7 @@ public class EvaluationUpdate extends AppCompatActivity {
         boolean validWeight;
         boolean validDate;
 
-        if(Validate.required(weight)) {
+        if(Validate.required(weight) && Validate.notZero(weight)) {
             tilWeight.setError(null);
             validWeight = true;
         } else {

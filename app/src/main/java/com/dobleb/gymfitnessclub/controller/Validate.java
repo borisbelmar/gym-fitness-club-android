@@ -14,6 +14,14 @@ public class Validate {
         return pattern.matcher(number).matches();
     }
 
+    public static boolean notZero(String number) {
+        try {
+            return Double.parseDouble(number) > 0;
+        } catch(Exception e) {
+            return false;
+        }
+    }
+
     public static boolean date(String date) {
         Pattern pattern = Pattern.compile("([12]\\d{3}-([1-9]|1[0-2])-([12]\\d|3[01]|0[1-9]))");
         return pattern.matcher(date).matches();
