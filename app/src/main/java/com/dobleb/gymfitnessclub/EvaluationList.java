@@ -27,6 +27,7 @@ import java.util.ArrayList;
 public class EvaluationList extends AppCompatActivity {
 
     private TextView logoutLink;
+    private TextView tvCleanFilter;
     private FloatingActionButton addBtn;
     private TextInputLayout tilFrom;
     private TextInputLayout tilTo;
@@ -56,6 +57,7 @@ public class EvaluationList extends AppCompatActivity {
         tilFrom = (TextInputLayout) findViewById(R.id.til_from);
         tilTo = (TextInputLayout) findViewById(R.id.til_to);
         filterBtn = (Button) findViewById(R.id.filterBtn);
+        tvCleanFilter = (TextView) findViewById(R.id.tvCleanFilter);
 
         preferences = getSharedPreferences("userData", Context.MODE_PRIVATE);
         dao = new EvaluationDAO(this);
@@ -73,8 +75,10 @@ public class EvaluationList extends AppCompatActivity {
             evaluations = dao.findAllByDates(dates, userId);
             tilFrom.getEditText().setText(dates[0]);
             tilTo.getEditText().setText(dates[1]);
+            tvCleanFilter.setVisibility(View.VISIBLE);
         } else {
             evaluations = dao.findAllByUser(userId);
+            tvCleanFilter.setVisibility(View.GONE);
         }
 
         evaluationAdapter = new EvaluationAdapter(EvaluationList.this, evaluations);
@@ -127,6 +131,21 @@ public class EvaluationList extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showDatePickerDialog(tilTo);
+            }
+        });
+
+        tvCleanFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                    tilFrom.getEditText().setText("");
+                    tilTo.getEditText().setText("");
+
+                    Intent intent = new Intent(v.getContext(),EvaluationList.class);
+
+                    startActivity(intent);
+
+                    Toast.makeText(v.getContext(), "Filtro de fechas eliminado", Toast.LENGTH_SHORT).show();
             }
         });
 

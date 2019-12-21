@@ -48,7 +48,7 @@ public class EvaluationAdapter extends BaseAdapter {
 
         Evaluation evaluation = evaluations.get(position);
         date.setText(evaluation.getDate());
-        imc.setText(String.format("%.1f",evaluation.calculateImc()));
+        imc.setText(String.format("%.1f",evaluation.getImc()));
 
         return convertView;
     }

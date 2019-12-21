@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -32,6 +33,7 @@ public class EvaluationUpdate extends AppCompatActivity {
     Evaluation evaluation;
     EvaluationDAO dao;
     SharedPreferences preferences;
+    String strWeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +67,12 @@ public class EvaluationUpdate extends AppCompatActivity {
         tilWeight.getEditText().setText(Double.toString(evaluation.getWeight()));
         tvImc.setText(String.format("%.1f", evaluation.getImc()));
 
+        try {
+            strWeight = tilWeight.getEditText().getText().toString();
+            weight = Double.parseDouble(strWeight);
+        } catch(Exception e) {
+            Log.e("Error", "ASdf");
+        }
         tilWeight.getEditText().addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -77,8 +85,7 @@ public class EvaluationUpdate extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                String strWeight = tilWeight.getEditText().getText().toString();
-
+                strWeight = tilWeight.getEditText().getText().toString();
                 if(!strWeight.isEmpty()) {
                     weight = Double.parseDouble(strWeight);
                     tvImc.setText(String.format("%.1f", weight / (height * height)));
@@ -99,6 +106,7 @@ public class EvaluationUpdate extends AppCompatActivity {
                     evaluation.setDate(date);
                     evaluation.setHeight(height);
                     evaluation.setWeight(weight);
+                    Log.i("Debug", Double.toString(evaluation.getImc()));
                     if(dao.update(evaluation)) {
                         Intent intent = new Intent(v.getContext(),EvaluationList.class);
                         startActivity(intent);

@@ -52,7 +52,7 @@ public class EvaluationDAO implements iCRUD<Evaluation> {
         admin = new AdminSQLiteOpenHelper(context, dbName, null, 1);
         SQLiteDatabase database = admin.getWritableDatabase();
 
-        Cursor rows = database.rawQuery("SELECT id, date, weight, height FROM evaluations WHERE user_id = " + user_id, null);
+        Cursor rows = database.rawQuery("SELECT id, date, weight, height FROM evaluations WHERE user_id = " + user_id + " ORDER BY date ASC", null);
 
         ArrayList<Evaluation> resultList = new ArrayList<>();
 
